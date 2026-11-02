@@ -4,9 +4,8 @@
 
 বইয়ের পৃষ্ঠা ধারাবাহিকভাবে না পড়লেও PageNest ঠিক ঠিক হিসাব রাখে: কোন পৃষ্ঠা পড়া হয়েছে, কোনগুলো বাকি, আর কত দিনে কতটুকু পড়া হলো।
 
-**🔗 Live Demo:** `[https://YOUR-USERNAME.github.io/PageNest/](https://debbrotokumark.github.io/BookPageTrack/)`
+**🔗 Live Demo:** `[https://debbrotokumark.github.io/BookPageTrack/]`
 
-> `YOUR-USERNAME` জায়গায় আপনার GitHub ইউজারনেম বসান।
 
 ---
 
