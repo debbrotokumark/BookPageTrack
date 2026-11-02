@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PageNest — আমার পড়ার ঘর</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📚</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--f:"Hind Siliguri","Noto Sans Bengali","Kalpurush",system-ui,sans-serif;--bg:#EDF0EC;--card:#FAFBF9;--ink:#1B2831;--mut:#5E6E75;--line:#D3DAD5;--ac:#1E6B73;--onac:#fff;--ac2:#B8861F;--bad:#B3433B}
+@media(prefers-color-scheme:dark){:root{--bg:#12191D;--card:#1A2429;--ink:#E4EAE6;--mut:#8FA0A6;--line:#2B383E;--ac:#4FB3BD;--onac:#0B1417;--ac2:#E0B24A;--bad:#E07A72}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 var(--f)}
+.w{max-width:1000px;margin:0 auto;padding:0 16px 48px}
+#top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;padding:16px 0}
+.brand{font-size:1.7rem;font-weight:700;color:var(--ac);letter-spacing:-.5px}
+.chip{display:inline-block;background:var(--card);border:1px solid var(--line);border-radius:99px;padding:3px 12px;margin-left:6px;font-size:.9rem}
+nav{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:18px;overflow-x:auto}
+nav button{background:none;border:0;border-radius:0;padding:10px 14px;color:var(--mut);border-bottom:3px solid transparent;white-space:nowrap}
+nav button.on{color:var(--ink);border-color:var(--ac);font-weight:600}
+button,input,select,textarea{font:inherit;color:inherit}
+button{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:6px 12px;cursor:pointer}
+button.pri{background:var(--ac);color:var(--onac);border-color:var(--ac);font-weight:600}
+button.danger{color:var(--bad);border-color:var(--bad)}
+button.lnk{border:0;background:none;color:var(--ac);padding:0 0 8px}
+button.x{border:0;background:none;color:var(--mut);padding:0 6px;font-size:1.2rem;line-height:1}
+:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+input,select,textarea{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:7px 10px;width:100%}
+label{display:block;font-size:.88rem;color:var(--mut);margin:10px 0 2px}
+h2{margin:0 0 4px;font-size:1.5rem}h3{margin:0 0 8px;font-size:1.05rem}
+.mut,.sm{color:var(--mut)}.sm{font-size:.85rem;margin:6px 0 0}
+.tag{background:var(--line);border-radius:6px;padding:1px 8px;font-size:.8rem;margin-left:6px}
+.tb{display:flex;gap:8px;margin-bottom:16px}.tb input{flex:1}.tb select{width:auto}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;cursor:pointer}
+.card:hover{border-color:var(--ac)}.card h3{margin:0 0 2px}.card p{margin:0 0 8px}
+.bar{height:6px;background:var(--line);border-radius:9px;overflow:hidden}.bar i{display:block;height:100%;background:var(--ac)}
+.empty{grid-column:1/-1;color:var(--mut);padding:30px 0;text-align:center}
+.bh{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:14px}
+.st{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 12px}.st span{display:block;font-size:.8rem;color:var(--mut)}.st b{font-size:1.1rem}
+.pn{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:14px}
+.mapw{width:100%}#map{width:100%;display:block;cursor:pointer}
+.row{display:flex;gap:8px;flex-wrap:wrap}.row input{flex:1;min-width:110px;width:auto}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}.cols .pn{margin:0}
+ul{list-style:none;margin:8px 0 0;padding:0}
+.li{display:flex;gap:8px;align-items:flex-start;padding:6px 0;border-top:1px solid var(--line)}.li>span{flex:1;white-space:pre-wrap;word-break:break-word}.li input{width:auto;margin-top:6px}
+.late{color:var(--bad)}.done{text-decoration:line-through;color:var(--mut)}
+.cn{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.cn h2{margin:0}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}.cal em{font-style:normal;text-align:center;color:var(--mut);font-size:.8rem}
+.day{min-height:58px;border:1px solid var(--line);border-radius:8px;padding:3px 6px;background:color-mix(in srgb,var(--ac) calc(var(--i)*100%),var(--card));display:flex;flex-direction:column;justify-content:space-between;font-size:.85rem}
+.day b{text-align:right;font-size:1rem}.day.td{outline:2px solid var(--ac2)}
+.br{display:grid;grid-template-columns:110px 1fr 70px;gap:8px;align-items:center;margin:6px 0;font-size:.9rem}.br .bar{height:12px}.br b{text-align:right}
+dialog{background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:12px;width:min(480px,94vw);padding:18px}
+dialog::backdrop{background:#0008}
+#toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 16px;border-radius:99px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:9}
+#toast.on{opacity:1}
+@media(max-width:520px){.tb{flex-wrap:wrap}.br{grid-template-columns:80px 1fr 56px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="w">
+<header id="top"></header>
+<nav id="nav"></nav>
+<main id="main"></main>
+</div>
+
+<dialog id="dlg">
+<form data-f="book">
+<h2 id="dt">নতুন বই</h2>
+<label>বইয়ের নাম *</label><input name="name" required>
+<label>লেখক</label><input name="author">
+<label>বিভাগ (যেমন: উপন্যাস, ধর্ম, পাঠ্যবই)</label><input name="cat" list="cats"><datalist id="cats"></datalist>
+<div class="row"><div style="flex:1"><label>মোট পৃষ্ঠা *</label><input name="total" inputmode="numeric" required></div>
+<div style="flex:1"><label>পড়া শুরুর তারিখ</label><input type="date" name="start"></div>
+<div style="flex:1"><label>শেষ করার টার্গেট</label><input type="date" name="target"></div></div>
+<label>নোট</label><textarea name="notes" rows="2"></textarea>
+<div class="row" style="margin-top:14px;justify-content:flex-end"><button type="button" data-a="close">বাতিল</button><button class="pri">সেভ করুন</button></div>
+</form>
+</dialog>
+<div id="toast" role="status"></div>
+
+<script>
+const K='pagenest_v1',D='০১২৩৪৫৬৭৮৯';
+const $=s=>document.querySelector(s);
+const bn=n=>String(n).replace(/\d/g,d=>D[d]);
+const en=s=>String(s).replace(/[০-৯]/g,d=>D.indexOf(d));
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const iso=d=>{const x=new Date(d);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')};
+const today=()=>iso(new Date());
+const fd=d=>d?new Date(d+'T00:00').toLocaleDateString('bn-BD',{day:'numeric',month:'short',year:'numeric'}):'—';
+let S=null;try{S=JSON.parse(localStorage.getItem(K))}catch(e){}
+S=S||{books:[],goal:20};
+const save=()=>{try{localStorage.setItem(K,JSON.stringify(S))}catch(e){toast('সেভ করা যায়নি — ব্রাউজার স্টোরেজ বন্ধ আছে')}};
+let tt;const toast=m=>{const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),2600)};
+try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
+
+/* ---- page ranges ---- */
+const norm=r=>{r=r.map(x=>[...x]).sort((a,b)=>a[0]-b[0]);const o=[];for(const x of r){const l=o[o.length-1];if(l&&x[0]<=l[1]+1)l[1]=Math.max(l[1],x[1]);else o.push(x)}return o};
+const cnt=r=>r.reduce((s,x)=>s+x[1]-x[0]+1,0);
+const gaps=(r,t)=>{const o=[];let p=1;for(const x of r){if(x[0]>p)o.push([p,x[0]-1]);p=x[1]+1}if(p<=t)o.push([p,t]);return o};
+const sub=(r,a,b)=>{const o=[];for(const x of r){if(x[1]<a||x[0]>b)o.push(x);else{if(x[0]<a)o.push([x[0],a-1]);if(x[1]>b)o.push([b+1,x[1]])}}return o};
+const fmt=r=>r.length?r.map(x=>x[0]==x[1]?bn(x[0]):bn(x[0])+'–'+bn(x[1])).join(', '):'নেই';
+const parse=(s,t)=>{const o=[];s=en(s).replace(/\s*[-–—~]+\s*/g,'-');for(const p of s.split(/[,،\s]+/).filter(Boolean)){const m=p.match(/^(\d+)(?:-(\d+))?$/);if(!m)return{e:'ফরম্যাট ঠিক নয়। যেমন: ২৫-৩১, ৪০'};let a=+m[1],b=m[2]?+m[2]:a;if(a>b)[a,b]=[b,a];if(a<1||b>t)return{e:`পৃষ্ঠা ১ থেকে ${bn(t)} এর মধ্যে হতে হবে`};o.push([a,b])}return o.length?{r:o}:{e:'পৃষ্ঠার নম্বর লিখুন'}};
+
+/* ---- stats ---- */
+const read=b=>cnt(b.r);
+const daysAll=()=>{const m={};S.books.forEach(b=>Object.entries(b.log).forEach(([d,n])=>m[d]=(m[d]||0)+n));return m};
+const streak=()=>{const m=daysAll();let d=new Date();if(!m[iso(d)])d.setDate(d.getDate()-1);let c=0;while(m[iso(d)]>0){c++;d.setDate(d.getDate()-1)}return c};
+const est=b=>{const ds=Object.keys(b.log).filter(d=>b.log[d]>0).sort();if(!ds.length)return null;const rem=b.total-read(b);if(rem<=0)return'done';const span=Math.max(1,Math.round((new Date(today())-new Date(ds[0]))/864e5)+1),avg=read(b)/span,e=new Date();e.setDate(e.getDate()+Math.ceil(rem/avg));return{avg,date:iso(e)}};
+const fix=b=>({id:b.id||uid(),name:b.name||'নামহীন',author:b.author||'',cat:b.cat||'',start:b.start||'',total:+b.total||1,target:b.target||'',notes:b.notes||'',r:norm(b.r||[]),log:b.log||{},bm:b.bm||[],tg:b.tg||[],qt:b.qt||[]});
+S.books=S.books.map(fix);
+
+/* ---- state & views ---- */
+let V={v:'lib',id:null,q:'',cat:'',cm:new Date(new Date().getFullYear(),new Date().getMonth(),1)},M={c:10,cols:10};
+const cur=()=>S.books.find(b=>b.id==V.id);
+const st=(l,v)=>`<div class="st"><span>${l}</span><b>${v}</b></div>`;
+const card=b=>{const p=Math.round(read(b)/b.total*100);return `<article class="card" data-a="open" data-id="${b.id}" tabindex="0"><h3>${esc(b.name)}</h3><p class="mut">${esc(b.author)}${b.cat?`<span class="tag">${esc(b.cat)}</span>`:''}</p><div class="bar"><i style="width:${p}%"></i></div><p class="sm">${bn(read(b))}/${bn(b.total)} পৃষ্ঠা, ${bn(p)}%</p></article>`};
+const cards=()=>{const q=V.q.toLowerCase(),l=S.books.filter(b=>(!V.cat||b.cat==V.cat)&&(b.name+' '+b.author).toLowerCase().includes(q));return l.length?l.map(card).join(''):`<p class="empty">${S.books.length?'কোনো বই মেলেনি।':'এখনো কোনো বই নেই। “নতুন বই” চেপে প্রথম বইটি যোগ করুন।'}</p>`};
+const libV=()=>{const cs=[...new Set(S.books.map(b=>b.cat).filter(Boolean))];return `<div class="tb"><input id="q" type="search" placeholder="বই বা লেখক খুঁজুন" value="${esc(V.q)}"><select id="cf" aria-label="বিভাগ"><option value="">সব বিভাগ</option>${cs.map(c=>`<option ${c==V.cat?'selected':''}>${esc(c)}</option>`).join('')}</select><button class="pri" data-a="new">+ নতুন বই</button></div><div class="grid" id="list">${cards()}</div>`};
+
+function bookV(b){
+ const rd=read(b),un=gaps(b.r,b.total),e=est(b),p=Math.round(rd/b.total*100);
+ const late=b.target&&b.target<today()&&rd<b.total;
+ const bm=[...b.bm].sort((x,y)=>x.p-y.p),tg=[...b.tg].sort((x,y)=>(x.d||'9').localeCompare(y.d||'9'));
+ return `<button class="lnk" data-a="go" data-v="lib">← লাইব্রেরি</button>
+<div class="bh"><div><h2>${esc(b.name)}</h2><p class="mut" style="margin:0">${esc(b.author)}${b.cat?`<span class="tag">${esc(b.cat)}</span>`:''}</p></div><div><button data-a="edit">সম্পাদনা</button> <button class="danger" data-a="del">মুছুন</button></div></div>
+<div class="stats">${st('পড়া হয়েছে',bn(rd)+' পৃষ্ঠা')}${st('বাকি',bn(b.total-rd)+' পৃষ্ঠা')}${st('অগ্রগতি',bn(p)+'%')}${st('গড় প্রতিদিন',e&&e!=='done'?bn(e.avg.toFixed(1)):'—')}${st('সম্ভাব্য শেষ',e==='done'?'শেষ হয়েছে':e?fd(e.date):'—')}${b.start?st('শুরু',fd(b.start)):''}${b.target?st('টার্গেট',`<span class="${late?'late':''}">${fd(b.target)}</span>`):''}</div>
+<section class="pn"><h3>পৃষ্ঠার মানচিত্র</h3><div class="mapw"><canvas id="map" aria-label="পৃষ্ঠার মানচিত্র"></canvas></div><p class="sm">ঘরে চাপ দিলে সেই পৃষ্ঠা পড়া/না-পড়া বদলাবে। গাঢ় ঘর = পড়া, সোনালি = বুকমার্ক।</p></section>
+<section class="pn"><h3>যে পৃষ্ঠাগুলো পড়লেন</h3><form data-f="log" class="row"><input name="rg" placeholder="যেমন ২৫-৩১, ৪০, ৬৫-৭০" required><button class="pri">পড়া হয়েছে</button><button type="button" class="ghost" data-a="unmark">পড়া হয়নি</button></form>
+<p><b>না-পড়া:</b> ${fmt(un)}</p><p style="margin:0"><b>পড়া:</b> ${fmt(b.r)}</p></section>
+${b.notes?`<section class="pn"><h3>নোট</h3><p style="margin:0;white-space:pre-wrap">${esc(b.notes)}</p></section>`:''}
+<div class="cols">
+<section class="pn"><h3>বুকমার্ক</h3><form data-f="bm" class="row"><input name="p" inputmode="numeric" placeholder="পৃষ্ঠা" required style="max-width:90px"><input name="t" placeholder="কেন? (ঐচ্ছিক)"><button class="pri">যোগ</button></form><ul>${bm.map(x=>`<li class="li"><span><b>পৃ. ${bn(x.p)}</b> ${esc(x.t)}</span><button class="x" data-a="rm" data-k="bm" data-i="${x.id}" aria-label="বুকমার্ক মুছুন">×</button></li>`).join('')}</ul></section>
+<section class="pn"><h3>টার্গেট (চ্যাপ্টার / টপিক)</h3><form data-f="tg" class="row"><input name="t" placeholder="যেমন: চ্যাপ্টার ৩ শেষ" required><input type="date" name="d"><button class="pri">যোগ</button></form><ul>${tg.map(x=>{const l=x.d&&x.d<today()&&!x.done;return `<li class="li"><input type="checkbox" data-a="tgl" data-i="${x.id}" ${x.done?'checked':''} aria-label="সম্পন্ন"><span class="${x.done?'done':''}">${esc(x.t)}${x.d?` <small class="${l?'late':'mut'}">${fd(x.d)}${l?' (সময় পেরিয়েছে)':''}</small>`:''}</span><button class="x" data-a="rm" data-k="tg" data-i="${x.id}" aria-label="টার্গেট মুছুন">×</button></li>`}).join('')}</ul></section>
+<section class="pn"><h3>উক্তি ও নিজের চিন্তা</h3><form data-f="qt"><textarea name="t" rows="2" required placeholder="গুরুত্বপূর্ণ লাইন বা শেখা বিষয়"></textarea><div class="row" style="margin-top:6px"><input name="p" inputmode="numeric" placeholder="পৃষ্ঠা (ঐচ্ছিক)"><button class="pri">যোগ</button></div></form><ul>${b.qt.map(x=>`<li class="li"><span>${esc(x.t)}${x.p?` <small class="mut">(পৃ. ${bn(x.p)})</small>`:''}</span><button class="x" data-a="rm" data-k="qt" data-i="${x.id}" aria-label="উক্তি মুছুন">×</button></li>`).join('')}</ul></section>
+</div>`}
+
+function calV(){
+ const m=daysAll(),d=V.cm,y=d.getFullYear(),mo=d.getMonth(),first=new Date(y,mo,1).getDay(),n=new Date(y,mo+1,0).getDate();
+ let h='',tot=0,days=0;for(let i=0;i<first;i++)h+='<i></i>';
+ for(let i=1;i<=n;i++){const k=y+'-'+String(mo+1).padStart(2,'0')+'-'+String(i).padStart(2,'0'),v=m[k]||0;tot+=v;if(v)days++;h+=`<div class="day${k==today()?' td':''}" style="--i:${v?Math.min(1,.25+v/S.goal*.75).toFixed(2):0}" title="${bn(v)} পৃষ্ঠা"><span>${bn(i)}</span><b>${v?bn(v):''}</b></div>`}
+ return `<div class="cn"><button data-a="cm" data-d="-1" aria-label="আগের মাস">‹</button><h2>${d.toLocaleDateString('bn-BD',{month:'long',year:'numeric'})}</h2><button data-a="cm" data-d="1" aria-label="পরের মাস">›</button></div><div class="cal">${['রবি','সোম','মঙ্গল','বুধ','বৃহ','শুক্র','শনি'].map(x=>`<em>${x}</em>`).join('')}${h}</div><p>এই মাসে <b>${bn(tot)}</b> পৃষ্ঠা, <b>${bn(days)}</b> দিন পড়েছেন। ঘর যত গাঢ়, দৈনিক লক্ষ্যের তত কাছে।</p>`}
+
+const bars=(l,u)=>{const mx=Math.max(1,...l.map(x=>x[1]));return l.length?l.map(x=>`<div class="br"><span>${esc(x[0])}</span><div class="bar"><i style="width:${x[1]/mx*100}%"></i></div><b>${bn(x[1])} ${u}</b></div>`).join(''):'<p class="mut">এখনো ডেটা নেই।</p>'};
+function anaV(){
+ const m=daysAll(),mm={},ms=[];Object.entries(m).forEach(([k,v])=>mm[k.slice(0,7)]=(mm[k.slice(0,7)]||0)+v);
+ for(let i=5;i>=0;i--){const d=new Date();d.setDate(1);d.setMonth(d.getMonth()-i);ms.push([d.toLocaleDateString('bn-BD',{month:'short'}),mm[iso(d).slice(0,7)]||0])}
+ const cat={};S.books.forEach(b=>{const c=b.cat||'অন্যান্য';cat[c]=(cat[c]||0)+read(b)});
+ const tm=S.books.map(b=>{const ds=Object.keys(b.log).sort();return[b.name,ds.length?Math.round((new Date(ds[ds.length-1])-new Date(ds[0]))/864e5)+1:0]}).filter(x=>x[1]).sort((a,b)=>b[1]-a[1]).slice(0,8);
+ const sum=n=>{let s=0;for(let i=0;i<n;i++){const d=new Date();d.setDate(d.getDate()-i);s+=m[iso(d)]||0}return s};
+ const all=S.books.reduce((s,b)=>s+read(b),0),fin=S.books.filter(b=>read(b)>=b.total).length;
+ return `<div class="stats">${st('মোট পড়া',bn(all)+' পৃষ্ঠা')}${st('শেষ করা বই',bn(fin)+'/'+bn(S.books.length))}${st('গত ৭ দিন',bn(sum(7))+' পৃষ্ঠা')}${st('গত ৩০ দিন',bn(sum(30))+' পৃষ্ঠা')}${st('টানা পড়া',bn(streak())+' দিন')}</div>
+<section class="pn"><h3>মাসভিত্তিক পড়া (শেষ ৬ মাস)</h3>${bars(ms,'পৃ.')}</section>
+<section class="pn"><h3>বিভাগ অনুযায়ী পড়া</h3>${bars(Object.entries(cat).sort((a,b)=>b[1]-a[1]),'পৃ.')}</section>
+<section class="pn"><h3>কোন বইয়ে বেশি সময় লেগেছে</h3>${bars(tm,'দিন')}</section>`}
+
+const setV=()=>`<section class="pn"><h3>দৈনিক লক্ষ্য</h3><form data-f="goal" class="row"><input name="g" inputmode="numeric" value="${bn(S.goal)}" style="max-width:100px"><button class="pri">সেভ</button></form><p class="sm">প্রতিদিন কত পৃষ্ঠা পড়তে চান। ক্যালেন্ডারের রং ও উপরের হিসাব এটির উপর নির্ভর করে।</p></section>
+<section class="pn"><h3>ব্যাকআপ</h3><div class="row"><button class="pri" data-a="exp">ব্যাকআপ ডাউনলোড (JSON)</button><label class="row" style="margin:0;align-items:center"><span>ইম্পোর্ট:</span><input type="file" id="imp" accept=".json,application/json"></label></div><p class="sm">ইম্পোর্ট করলে আগের ডেটা মুছবে না — নতুন ডেটা মিলিয়ে যুক্ত হবে। ডেটা শুধু এই ব্রাউজারে থাকে, তাই নিয়মিত ব্যাকআপ নিন।</p></section>
+<section class="pn"><h3>সব ডেটা মুছুন</h3><button class="danger" data-a="reset">সব মুছে ফেলুন</button></section>`;
+
+function render(){
+ if(V.v=='book'&&!cur())V.v='lib';
+ const t=daysAll()[today()]||0;
+ $('#top').innerHTML=`<div class="brand">PageNest</div><div><span class="chip">আজ <b>${bn(t)}</b>/${bn(S.goal)} পৃষ্ঠা${t>=S.goal?' ✓':''}</span><span class="chip">🔥 ${bn(streak())} দিন</span></div>`;
+ const tabs=[['lib','লাইব্রেরি'],['cal','ক্যালেন্ডার'],['ana','অ্যানালিটিক্স'],['set','ব্যাকআপ ও সেটিং']],a=V.v=='book'?'lib':V.v;
+ $('#nav').innerHTML=tabs.map(x=>`<button class="${x[0]==a?'on':''}" data-a="go" data-v="${x[0]}">${x[1]}</button>`).join('');
+ $('#main').innerHTML=({lib:libV,book:()=>bookV(cur()),cal:calV,ana:anaV,set:setV})[V.v]();
+ draw();
+}
+function draw(){
+ const cv=$('#map');if(!cv)return;const b=cur(),W=cv.parentElement.clientWidth,c=Math.max(6,Math.min(18,Math.floor(Math.sqrt(W*140/b.total)))),cols=Math.max(1,Math.floor(W/c)),rows=Math.ceil(b.total/cols),r=devicePixelRatio||1;
+ cv.width=W*r;cv.height=rows*c*r;cv.style.height=rows*c+'px';const x=cv.getContext('2d');x.scale(r,r);
+ const cs=getComputedStyle(document.documentElement),A=cs.getPropertyValue('--ac'),L=cs.getPropertyValue('--line'),G=cs.getPropertyValue('--ac2'),rs=new Set(),bm=new Set(b.bm.map(y=>y.p));
+ b.r.forEach(([p,z])=>{for(let i=p;i<=z;i++)rs.add(i)});
+ for(let i=1;i<=b.total;i++){x.fillStyle=bm.has(i)?G:rs.has(i)?A:L;x.fillRect(((i-1)%cols)*c+1,Math.floor((i-1)/cols)*c+1,c-2,c-2)}
+ M={c,cols};
+}
+
+/* ---- actions ---- */
+function mark(add,s){
+ const b=cur(),x=parse(s,b.total);if(x.e)return toast(x.e);
+ const before=cnt(b.r);b.r=add?norm([...b.r,...x.r]):x.r.reduce((r,[a,c])=>sub(r,a,c),b.r);
+ const d=cnt(b.r)-before,k=today();
+ if(add){b.log[k]=(b.log[k]||0)+d;toast(d?`${bn(d)} নতুন পৃষ্ঠা যোগ হয়েছে`:'এই পৃষ্ঠাগুলো আগেই পড়া ছিল')}
+ else{b.log[k]=Math.max(0,(b.log[k]||0)+d);toast(`${bn(-d)} পৃষ্ঠা না-পড়া করা হয়েছে`)}
+ save();render();
+}
+function openForm(b){
+ const f=$('#dlg form');f.reset();f.dataset.id=b?b.id:'';$('#dt').textContent=b?'বই সম্পাদনা':'নতুন বই';
+ $('#cats').innerHTML=[...new Set(S.books.map(x=>x.cat).filter(Boolean))].map(c=>`<option value="${esc(c)}">`).join('');
+ if(b){f.name.value=b.name;f.author.value=b.author;f.cat.value=b.cat;f.total.value=bn(b.total);f.start.value=b.start;f.target.value=b.target;f.notes.value=b.notes}
+ else f.start.value=today();
+ $('#dlg').showModal();
+}
+function exp(){
+ const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(S,null,1)],{type:'application/json'}));
+ a.download='pagenest-backup-'+today()+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
+function merge(d){
+ let a=0,u=0;for(const nb of d.books||[]){const b=S.books.find(x=>x.id==nb.id);
+  if(!b){S.books.push(fix(nb));a++}
+  else{b.r=norm([...b.r,...(nb.r||[])]);for(const[k,v]of Object.entries(nb.log||{}))b.log[k]=Math.max(b.log[k]||0,v);['bm','tg','qt'].forEach(k=>{for(const i of nb[k]||[])if(!b[k].some(x=>x.id==i.id))b[k].push(i)});u++}}
+ save();return[a,u];
+}
+
+document.addEventListener('click',e=>{
+ if(e.target.id=='map'){const b=cur(),R=e.target.getBoundingClientRect(),p=Math.floor((e.clientY-R.top)/M.c)*M.cols+Math.floor((e.clientX-R.left)/M.c)+1;
+  if(p>=1&&p<=b.total)mark(!b.r.some(x=>p>=x[0]&&p<=x[1]),String(p));return}
+ const t=e.target.closest('[data-a]');if(!t)return;const a=t.dataset.a,b=cur();
+ if(a=='go'){V.v=t.dataset.v;render()}
+ else if(a=='open'){V.v='book';V.id=t.dataset.id;render();scrollTo(0,0)}
+ else if(a=='new')openForm();
+ else if(a=='edit')openForm(b);
+ else if(a=='close')$('#dlg').close();
+ else if(a=='del'){if(confirm(`“${b.name}” মুছে ফেলবেন? এটি ফেরানো যাবে না।`)){S.books=S.books.filter(x=>x!==b);save();V.v='lib';render()}}
+ else if(a=='unmark')mark(false,t.form.rg.value);
+ else if(a=='rm'){b[t.dataset.k]=b[t.dataset.k].filter(x=>x.id!=t.dataset.i);save();render()}
+ else if(a=='tgl'){b.tg.find(y=>y.id==t.dataset.i).done=t.checked;save();render()}
+ else if(a=='cm'){V.cm=new Date(V.cm.getFullYear(),V.cm.getMonth()+ +t.dataset.d,1);render()}
+ else if(a=='exp')exp();
+ else if(a=='reset'){if(confirm('সব বই ও হিসাব মুছে যাবে। নিশ্চিত?')&&confirm('সত্যিই মুছবেন? আগে ব্যাকআপ নিয়েছেন তো?')){S={books:[],goal:20};save();V.v='lib';render()}}
+});
+document.addEventListener('keydown',e=>{if(e.key=='Enter'&&e.target.matches('.card'))e.target.click()});
+document.addEventListener('input',e=>{if(e.target.id=='q'){V.q=e.target.value;$('#list').innerHTML=cards()}});
+document.addEventListener('change',e=>{
+ if(e.target.id=='cf'){V.cat=e.target.value;$('#list').innerHTML=cards()}
+ if(e.target.id=='imp'){const f=e.target.files[0];if(!f)return;f.text().then(s=>{try{const[a,u]=merge(JSON.parse(s));toast(`${bn(a)}টি নতুন বই যোগ, ${bn(u)}টি বই মিলিয়ে আপডেট`);render()}catch(x){toast('ফাইলটি পড়া যায়নি — সঠিক ব্যাকআপ ফাইল দিন')}})}
+});
+document.addEventListener('submit',e=>{
+ e.preventDefault();const f=e.target,k=f.dataset.f,o=Object.fromEntries(new FormData(f)),b=cur();
+ if(k=='book'){const t=+en(o.total);if(!o.name.trim()||!(t>=1))return toast('বইয়ের নাম ও মোট পৃষ্ঠা দিন');
+  const v={name:o.name.trim(),author:o.author.trim(),cat:o.cat.trim(),start:o.start,total:t,target:o.target,notes:o.notes.trim()};
+  let x=S.books.find(y=>y.id==f.dataset.id);
+  if(x){Object.assign(x,v);x.r=sub(x.r,t+1,1e9);x.bm=x.bm.filter(y=>y.p<=t)}else{x=fix(v);S.books.push(x);V.id=x.id;V.v='book'}
+  $('#dlg').close();toast('বই সেভ হয়েছে')}
+ else if(k=='log')return mark(true,o.rg);
+ else if(k=='bm'){const p=+en(o.p);if(!(p>=1&&p<=b.total))return toast(`পৃষ্ঠা ১ থেকে ${bn(b.total)} এর মধ্যে দিন`);b.bm.push({id:uid(),p,t:o.t.trim()})}
+ else if(k=='tg')b.tg.push({id:uid(),t:o.t.trim(),d:o.d,done:false});
+ else if(k=='qt')b.qt.push({id:uid(),t:o.t.trim(),p:+en(o.p)||0});
+ else if(k=='goal'){S.goal=Math.max(1,+en(o.g)||20);toast('লক্ষ্য সেভ হয়েছে')}
+ save();render();
+});
+addEventListener('resize',draw);
+render();
+</script>
+</body>
+</html>
