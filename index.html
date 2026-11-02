@@ -79,6 +79,7 @@ dialog::backdrop{background:#0008}
 <div class="row" style="margin-top:14px;justify-content:flex-end"><button type="button" data-a="close">বাতিল</button><button class="pri">সেভ করুন</button></div>
 </form>
 </dialog>
+<dialog id="ed"><form data-f="ed"><h2 id="et"></h2><div id="ef"></div><div class="row" style="margin-top:14px;justify-content:flex-end"><button type="button" data-a="closeEd">বাতিল</button><button class="pri">আপডেট</button></div></form></dialog>
 <div id="toast" role="status"></div>
 
 <script>
@@ -110,7 +111,7 @@ const read=b=>cnt(b.r);
 const daysAll=()=>{const m={};S.books.forEach(b=>Object.entries(b.log).forEach(([d,n])=>m[d]=(m[d]||0)+n));return m};
 const streak=()=>{const m=daysAll();let d=new Date();if(!m[iso(d)])d.setDate(d.getDate()-1);let c=0;while(m[iso(d)]>0){c++;d.setDate(d.getDate()-1)}return c};
 const est=b=>{const ds=Object.keys(b.log).filter(d=>b.log[d]>0).sort();if(!ds.length)return null;const rem=b.total-read(b);if(rem<=0)return'done';const span=Math.max(1,Math.round((new Date(today())-new Date(ds[0]))/864e5)+1),avg=read(b)/span,e=new Date();e.setDate(e.getDate()+Math.ceil(rem/avg));return{avg,date:iso(e)}};
-const fix=b=>({id:b.id||uid(),name:b.name||'নামহীন',author:b.author||'',cat:b.cat||'',start:b.start||'',total:+b.total||1,target:b.target||'',notes:b.notes||'',r:norm(b.r||[]),log:b.log||{},bm:b.bm||[],tg:b.tg||[],qt:b.qt||[]});
+const fix=b=>({id:b.id||uid(),name:b.name||'নামহীন',author:b.author||'',cat:b.cat||'',start:b.start||'',total:+b.total||1,target:b.target||'',notes:b.notes||'',r:norm(b.r||[]),log:b.log||{},bm:b.bm||[],tg:b.tg||[],qt:b.qt||[],hist:b.hist||[]});
 S.books=S.books.map(fix);
 
 /* ---- state & views ---- */
@@ -124,18 +125,19 @@ const libV=()=>{const cs=[...new Set(S.books.map(b=>b.cat).filter(Boolean))];ret
 function bookV(b){
  const rd=read(b),un=gaps(b.r,b.total),e=est(b),p=Math.round(rd/b.total*100);
  const late=b.target&&b.target<today()&&rd<b.total;
- const bm=[...b.bm].sort((x,y)=>x.p-y.p),tg=[...b.tg].sort((x,y)=>(x.d||'9').localeCompare(y.d||'9'));
+ const hs=[...b.hist].sort((x,y)=>y.date.localeCompare(x.date)),bm=[...b.bm].sort((x,y)=>x.p-y.p),tg=[...b.tg].sort((x,y)=>(x.d||'9').localeCompare(y.d||'9'));
  return `<button class="lnk" data-a="go" data-v="lib">← লাইব্রেরি</button>
 <div class="bh"><div><h2>${esc(b.name)}</h2><p class="mut" style="margin:0">${esc(b.author)}${b.cat?`<span class="tag">${esc(b.cat)}</span>`:''}</p></div><div><button data-a="edit">সম্পাদনা</button> <button class="danger" data-a="del">মুছুন</button></div></div>
 <div class="stats">${st('পড়া হয়েছে',bn(rd)+' পৃষ্ঠা')}${st('বাকি',bn(b.total-rd)+' পৃষ্ঠা')}${st('অগ্রগতি',bn(p)+'%')}${st('গড় প্রতিদিন',e&&e!=='done'?bn(e.avg.toFixed(1)):'—')}${st('সম্ভাব্য শেষ',e==='done'?'শেষ হয়েছে':e?fd(e.date):'—')}${b.start?st('শুরু',fd(b.start)):''}${b.target?st('টার্গেট',`<span class="${late?'late':''}">${fd(b.target)}</span>`):''}</div>
 <section class="pn"><h3>পৃষ্ঠার মানচিত্র</h3><div class="mapw"><canvas id="map" aria-label="পৃষ্ঠার মানচিত্র"></canvas></div><p class="sm">ঘরে চাপ দিলে সেই পৃষ্ঠা পড়া/না-পড়া বদলাবে। গাঢ় ঘর = পড়া, সোনালি = বুকমার্ক।</p></section>
-<section class="pn"><h3>যে পৃষ্ঠাগুলো পড়লেন</h3><form data-f="log" class="row"><input name="rg" placeholder="যেমন ২৫-৩১, ৪০, ৬৫-৭০" required><button class="pri">পড়া হয়েছে</button><button type="button" class="ghost" data-a="unmark">পড়া হয়নি</button></form>
+<section class="pn"><h3>যে পৃষ্ঠাগুলো পড়লেন</h3><form data-f="log" class="row"><input name="rg" placeholder="যেমন ২৫-৩১, ৪০, ৬৫-৭০" required><input type="date" name="dt" value="${today()}" style="max-width:150px" aria-label="তারিখ"><button class="pri">পড়া হয়েছে</button><button type="button" class="ghost" data-a="unmark">পড়া হয়নি</button></form>
 <p><b>না-পড়া:</b> ${fmt(un)}</p><p style="margin:0"><b>পড়া:</b> ${fmt(b.r)}</p></section>
+<section class="pn"><div class="row" style="justify-content:space-between;align-items:center"><h3 style="margin:0">পড়ার ইতিহাস</h3>${hs.length?'<button class="danger" data-a="rbook">হিসাব রিসেট</button>':''}</div><ul>${hs.map(s=>`<li class="li"><span><b>${fd(s.date)}</b> পৃ. ${fmt(s.q)} <small class="mut">(${bn(cnt(s.nw))} নতুন)</small></span><button class="x" data-a="ed" data-k="hist" data-i="${s.id}" aria-label="সম্পাদনা">✎</button><button class="x" data-a="rm" data-k="hist" data-i="${s.id}" aria-label="মুছুন">×</button></li>`).join('')||'<li class="li mut">এখনো কোনো এন্ট্রি নেই।</li>'}</ul><p class="sm">তারিখ বা পৃষ্ঠা বদলানো ও মোছা যায়। মুছলে সেই এন্ট্রির নতুন পৃষ্ঠাগুলো আবার না-পড়া হয়ে যাবে।</p></section>
 ${b.notes?`<section class="pn"><h3>নোট</h3><p style="margin:0;white-space:pre-wrap">${esc(b.notes)}</p></section>`:''}
 <div class="cols">
-<section class="pn"><h3>বুকমার্ক</h3><form data-f="bm" class="row"><input name="p" inputmode="numeric" placeholder="পৃষ্ঠা" required style="max-width:90px"><input name="t" placeholder="কেন? (ঐচ্ছিক)"><button class="pri">যোগ</button></form><ul>${bm.map(x=>`<li class="li"><span><b>পৃ. ${bn(x.p)}</b> ${esc(x.t)}</span><button class="x" data-a="rm" data-k="bm" data-i="${x.id}" aria-label="বুকমার্ক মুছুন">×</button></li>`).join('')}</ul></section>
-<section class="pn"><h3>টার্গেট (চ্যাপ্টার / টপিক)</h3><form data-f="tg" class="row"><input name="t" placeholder="যেমন: চ্যাপ্টার ৩ শেষ" required><input type="date" name="d"><button class="pri">যোগ</button></form><ul>${tg.map(x=>{const l=x.d&&x.d<today()&&!x.done;return `<li class="li"><input type="checkbox" data-a="tgl" data-i="${x.id}" ${x.done?'checked':''} aria-label="সম্পন্ন"><span class="${x.done?'done':''}">${esc(x.t)}${x.d?` <small class="${l?'late':'mut'}">${fd(x.d)}${l?' (সময় পেরিয়েছে)':''}</small>`:''}</span><button class="x" data-a="rm" data-k="tg" data-i="${x.id}" aria-label="টার্গেট মুছুন">×</button></li>`}).join('')}</ul></section>
-<section class="pn"><h3>উক্তি ও নিজের চিন্তা</h3><form data-f="qt"><textarea name="t" rows="2" required placeholder="গুরুত্বপূর্ণ লাইন বা শেখা বিষয়"></textarea><div class="row" style="margin-top:6px"><input name="p" inputmode="numeric" placeholder="পৃষ্ঠা (ঐচ্ছিক)"><button class="pri">যোগ</button></div></form><ul>${b.qt.map(x=>`<li class="li"><span>${esc(x.t)}${x.p?` <small class="mut">(পৃ. ${bn(x.p)})</small>`:''}</span><button class="x" data-a="rm" data-k="qt" data-i="${x.id}" aria-label="উক্তি মুছুন">×</button></li>`).join('')}</ul></section>
+<section class="pn"><h3>বুকমার্ক</h3><form data-f="bm" class="row"><input name="p" inputmode="numeric" placeholder="পৃষ্ঠা" required style="max-width:90px"><input name="t" placeholder="কেন? (ঐচ্ছিক)"><button class="pri">যোগ</button></form><ul>${bm.map(x=>`<li class="li"><span><b>পৃ. ${bn(x.p)}</b> ${esc(x.t)}</span><button class="x" data-a="ed" data-k="bm" data-i="${x.id}" aria-label="সম্পাদনা">✎</button><button class="x" data-a="rm" data-k="bm" data-i="${x.id}" aria-label="বুকমার্ক মুছুন">×</button></li>`).join('')}</ul></section>
+<section class="pn"><h3>টার্গেট (চ্যাপ্টার / টপিক)</h3><form data-f="tg" class="row"><input name="t" placeholder="যেমন: চ্যাপ্টার ৩ শেষ" required><input type="date" name="d"><button class="pri">যোগ</button></form><ul>${tg.map(x=>{const l=x.d&&x.d<today()&&!x.done;return `<li class="li"><input type="checkbox" data-a="tgl" data-i="${x.id}" ${x.done?'checked':''} aria-label="সম্পন্ন"><span class="${x.done?'done':''}">${esc(x.t)}${x.d?` <small class="${l?'late':'mut'}">${fd(x.d)}${l?' (সময় পেরিয়েছে)':''}</small>`:''}</span><button class="x" data-a="ed" data-k="tg" data-i="${x.id}" aria-label="সম্পাদনা">✎</button><button class="x" data-a="rm" data-k="tg" data-i="${x.id}" aria-label="টার্গেট মুছুন">×</button></li>`}).join('')}</ul></section>
+<section class="pn"><h3>উক্তি ও নিজের চিন্তা</h3><form data-f="qt"><textarea name="t" rows="2" required placeholder="গুরুত্বপূর্ণ লাইন বা শেখা বিষয়"></textarea><div class="row" style="margin-top:6px"><input name="p" inputmode="numeric" placeholder="পৃষ্ঠা (ঐচ্ছিক)"><button class="pri">যোগ</button></div></form><ul>${b.qt.map(x=>`<li class="li"><span>${esc(x.t)}${x.p?` <small class="mut">(পৃ. ${bn(x.p)})</small>`:''}</span><button class="x" data-a="ed" data-k="qt" data-i="${x.id}" aria-label="সম্পাদনা">✎</button><button class="x" data-a="rm" data-k="qt" data-i="${x.id}" aria-label="উক্তি মুছুন">×</button></li>`).join('')}</ul></section>
 </div>`}
 
 function calV(){
@@ -180,13 +182,24 @@ function draw(){
 }
 
 /* ---- actions ---- */
-function mark(add,s){
- const b=cur(),x=parse(s,b.total);if(x.e)return toast(x.e);
- const before=cnt(b.r);b.r=add?norm([...b.r,...x.r]):x.r.reduce((r,[a,c])=>sub(r,a,c),b.r);
- const d=cnt(b.r)-before,k=today();
- if(add){b.log[k]=(b.log[k]||0)+d;toast(d?`${bn(d)} নতুন পৃষ্ঠা যোগ হয়েছে`:'এই পৃষ্ঠাগুলো আগেই পড়া ছিল')}
- else{b.log[k]=Math.max(0,(b.log[k]||0)+d);toast(`${bn(-d)} পৃষ্ঠা না-পড়া করা হয়েছে`)}
+const diff=(a,b)=>norm(b.reduce((acc,[x,y])=>sub(acc,x,y),a));
+const addS=(b,q,date)=>{const nw=diff(q,b.r),n=cnt(nw);b.r=norm([...b.r,...q]);if(n){b.hist.push({id:uid(),date,q,nw});b.log[date]=(b.log[date]||0)+n}return n};
+const delS=(b,id)=>{const s=b.hist.find(x=>x.id==id);if(!s)return;b.r=diff(b.r,s.nw);b.log[s.date]=Math.max(0,(b.log[s.date]||0)-cnt(s.nw));b.hist=b.hist.filter(x=>x!==s)};
+function mark(add,s,dt){
+ const b=cur(),x=parse(s,b.total);if(x.e)return toast(x.e);const q=norm(x.r);
+ if(add){const n=addS(b,q,dt||today());toast(n?`${bn(n)} নতুন পৃষ্ঠা যোগ হয়েছে`:'এই পৃষ্ঠাগুলো আগেই পড়া ছিল')}
+ else{const before=cnt(b.r);b.r=diff(b.r,q);b.hist.forEach(h=>{const c=cnt(h.nw);h.nw=diff(h.nw,q);b.log[h.date]=Math.max(0,(b.log[h.date]||0)-(c-cnt(h.nw)))});toast(`${bn(before-cnt(b.r))} পৃষ্ঠা না-পড়া করা হয়েছে`)}
  save();render();
+}
+const EF={
+ hist:s=>['পড়ার এন্ট্রি সম্পাদনা',`<label>তারিখ</label><input type="date" name="d" value="${s.date}" required><label>পৃষ্ঠা (Range)</label><input name="rg" value="${fmt(s.q).replace(/–/g,'-')}" required>`],
+ bm:s=>['বুকমার্ক সম্পাদনা',`<label>পৃষ্ঠা</label><input name="p" inputmode="numeric" value="${bn(s.p)}" required><label>নোট</label><input name="t" value="${esc(s.t)}">`],
+ tg:s=>['টার্গেট সম্পাদনা',`<label>টার্গেট</label><input name="t" value="${esc(s.t)}" required><label>তারিখ</label><input type="date" name="d" value="${s.d||''}">`],
+ qt:s=>['উক্তি সম্পাদনা',`<label>উক্তি / চিন্তা</label><textarea name="t" rows="4" required>${esc(s.t)}</textarea><label>পৃষ্ঠা</label><input name="p" inputmode="numeric" value="${s.p?bn(s.p):''}">`]
+};
+function openEdit(k,id){
+ const s=cur()[k].find(x=>x.id==id);if(!s)return;const f=$('#ed form'),[h,body]=EF[k](s);
+ f.dataset.k=k;f.dataset.id=id;$('#et').textContent=h;$('#ef').innerHTML=body;$('#ed').showModal();
 }
 function openForm(b){
  const f=$('#dlg form');f.reset();f.dataset.id=b?b.id:'';$('#dt').textContent=b?'বই সম্পাদনা':'নতুন বই';
@@ -202,7 +215,7 @@ function exp(){
 function merge(d){
  let a=0,u=0;for(const nb of d.books||[]){const b=S.books.find(x=>x.id==nb.id);
   if(!b){S.books.push(fix(nb));a++}
-  else{b.r=norm([...b.r,...(nb.r||[])]);for(const[k,v]of Object.entries(nb.log||{}))b.log[k]=Math.max(b.log[k]||0,v);['bm','tg','qt'].forEach(k=>{for(const i of nb[k]||[])if(!b[k].some(x=>x.id==i.id))b[k].push(i)});u++}}
+  else{b.r=norm([...b.r,...(nb.r||[])]);for(const[k,v]of Object.entries(nb.log||{}))b.log[k]=Math.max(b.log[k]||0,v);['bm','tg','qt','hist'].forEach(k=>{for(const i of nb[k]||[])if(!b[k].some(x=>x.id==i.id))b[k].push(i)});u++}}
  save();return[a,u];
 }
 
@@ -217,7 +230,10 @@ document.addEventListener('click',e=>{
  else if(a=='close')$('#dlg').close();
  else if(a=='del'){if(confirm(`“${b.name}” মুছে ফেলবেন? এটি ফেরানো যাবে না।`)){S.books=S.books.filter(x=>x!==b);save();V.v='lib';render()}}
  else if(a=='unmark')mark(false,t.form.rg.value);
- else if(a=='rm'){b[t.dataset.k]=b[t.dataset.k].filter(x=>x.id!=t.dataset.i);save();render()}
+ else if(a=='rm'){const k=t.dataset.k;if(k=='hist'){if(!confirm('এই এন্ট্রি মুছলে এর পৃষ্ঠাগুলো আবার না-পড়া হবে। নিশ্চিত?'))return;delS(b,t.dataset.i)}else b[k]=b[k].filter(x=>x.id!=t.dataset.i);save();render()}
+ else if(a=='ed')openEdit(t.dataset.k,t.dataset.i);
+ else if(a=='closeEd')$('#ed').close();
+ else if(a=='rbook'){if(confirm('এই বইয়ের সব পড়ার হিসাব মুছে যাবে। নিশ্চিত?')){b.r=[];b.hist=[];b.log={};save();render()}}
  else if(a=='tgl'){b.tg.find(y=>y.id==t.dataset.i).done=t.checked;save();render()}
  else if(a=='cm'){V.cm=new Date(V.cm.getFullYear(),V.cm.getMonth()+ +t.dataset.d,1);render()}
  else if(a=='exp')exp();
@@ -236,7 +252,13 @@ document.addEventListener('submit',e=>{
   let x=S.books.find(y=>y.id==f.dataset.id);
   if(x){Object.assign(x,v);x.r=sub(x.r,t+1,1e9);x.bm=x.bm.filter(y=>y.p<=t)}else{x=fix(v);S.books.push(x);V.id=x.id;V.v='book'}
   $('#dlg').close();toast('বই সেভ হয়েছে')}
- else if(k=='log')return mark(true,o.rg);
+ else if(k=='log')return mark(true,o.rg,o.dt);
+ else if(k=='ed'){const kk=f.dataset.k,i=f.dataset.id,x=b[kk].find(y=>y.id==i);
+  if(kk=='hist'){const r=parse(o.rg,b.total);if(r.e)return toast(r.e);delS(b,i);addS(b,norm(r.r),o.d)}
+  else if(kk=='bm'){const p=+en(o.p);if(!(p>=1&&p<=b.total))return toast(`পৃষ্ঠা ১ থেকে ${bn(b.total)} এর মধ্যে দিন`);x.p=p;x.t=o.t.trim()}
+  else if(kk=='tg'){x.t=o.t.trim();x.d=o.d}
+  else{x.t=o.t.trim();x.p=+en(o.p)||0}
+  $('#ed').close();toast('আপডেট হয়েছে')}
  else if(k=='bm'){const p=+en(o.p);if(!(p>=1&&p<=b.total))return toast(`পৃষ্ঠা ১ থেকে ${bn(b.total)} এর মধ্যে দিন`);b.bm.push({id:uid(),p,t:o.t.trim()})}
  else if(k=='tg')b.tg.push({id:uid(),t:o.t.trim(),d:o.d,done:false});
  else if(k=='qt')b.qt.push({id:uid(),t:o.t.trim(),p:+en(o.p)||0});
